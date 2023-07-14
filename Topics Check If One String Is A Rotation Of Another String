@@ -1,0 +1,148 @@
+*********APPROACH 1 BRUTE FORCE ********TC = O(N^2)*********SC = O(N)*************
+bool check(string &p, string &q, int x, int n)
+{
+       for(int i=0;i<n;i++)
+       {
+           if(p[i] != q[((x+i)%n)])
+           {
+               return false;
+           }
+       }
+
+       return true;
+}
+int isCyclicRotation(string &p, string &q) 
+{
+      char f = p[0];
+      vector<int> options;
+      for(int i=0;i<q.size();i++)
+      {
+          if(q[i] == f)
+          {
+              options.push_back(i);
+          }
+      }
+      int n = p.size();
+
+      for(int i=0;i<options.size();i++)
+      {
+          if(check(p, q, options[i], n) == true)
+          {
+              return 1;
+          }
+      }
+
+      return 0;
+
+      
+}
+
+----------------------------------------------------------------------------
+*****************APPROACH 2 USING STL*********************************
+
+# include<bits/stdc++.h>
+# include<string>
+int isCyclicRotation(string &p, string &q) 
+{
+    string x = p+p;
+    // only check that q is substring of p or not
+    size_t found  = x.find(q);
+    if(found != string ::npos)
+    {
+        return 1;
+    }
+    return 0;
+    
+}
+
+
+
+-------------------------------------------------------------------------------
+
+***********APPROACH 3 OPTIMISED APPROACH******TC = O(N)**************************
+
+/*
+    Time Complexity: O(N)
+    Space Complexity: O(N)
+
+    Where 'N' denotes the length of both strings 'P' and 'Q'.
+*/
+
+// Function that checks whether string 'a' is present in string 'b' as substring using KMP algorithm.
+int isSubstring(string &a, string &b)
+{
+    // Finding the length of both strings.
+    int m = a.length();
+    int n = b.length();
+
+    // Defining and initializing the pointer variables to preprocess the string 'a'.
+    int i = 1, j = 0;
+
+    // Defining the lps array.
+    int lps[m] = {0};
+
+    while (i < m)
+    {
+
+        // If the ith index of string 'a' matches with its jth index, then store the value 'j'+1 at lps[i] and increment both 'i' and 'j'.
+        if (a[i] == a[j])
+        {
+            lps[i] = j + 1;
+            i++;
+            j++;
+        }
+        // If the ith index of 'a' does not match with its jth index of 'a' and 'j' > 0, then 'j' redirects to lps[j-1].
+        else if (j > 0)
+        {
+            j = lps[j - 1];
+        }
+        // If none of the above condition matches then make lps[i] as 0 and increment 'i'.
+        else
+        {
+            lps[i] = 0;
+            i++;
+        }
+    }
+
+    i = 0, j = 0;
+
+    // Iterating through both the strings to find a match.
+    while (i < n && j < m)
+    {
+        // If the ith character of 'b' matches with the jth character of 'a', then increment both 'i' and 'j'.
+        if (b[i] == a[j])
+        {
+            i++;
+            j++;
+        }
+        // If the above characters do not match and 'j' > 0, then 'j' redirects to lps[j-1].
+        else if (j > 0)
+        {
+            j = lps[j - 1];
+        }
+        // If none of the above mentioned condition matches, then increment 'i'.
+        else
+        {
+            i++;
+        }
+    }
+
+    // If 'j' is equal to 'm', then we will return 1 otherwise we will return 0.
+    if (j == m)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+int isCyclicRotation(string &p, string &q)
+{
+    // Performing the concatenation of string 'p' with itself.
+    string res = p + p;
+
+    // Checking if the substring 'q' is present in the string 'res'.
+    return isSubstring(q, res);
+}

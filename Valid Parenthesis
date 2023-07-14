@@ -1,0 +1,37 @@
+*********USING STACK******TC = O(NLOGN)*****SC = O(N)**************
+bool isValidParenthesis(string s)
+{
+    stack<char> st;
+    for(int i=0;i<s.size();i++)
+    {
+        if(s[i] == '(' || s[i] == '{' || s[i]=='[')
+        {
+            st.push(s[i]);
+        }
+        else 
+        {
+            char ch = s[i];
+            if (!st.empty()) {
+              char x = st.top();
+              if ((ch == ')' && x == '(') || (ch == '}' && x == '{') || (ch == ']' && x == '['))
+              {
+                  st.pop();
+              }
+              else 
+              {
+                  return false;
+              }
+            }
+             else {
+              return false;
+            }
+        }
+    }
+
+    if(!st.empty())
+    {
+        return false;
+    }
+
+    return true;
+}
